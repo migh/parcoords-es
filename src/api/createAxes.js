@@ -35,7 +35,7 @@ const createAxes = (config, pc, xscale, flags, axis) =>
         return 'translate(' + xscale(d) + ')';
       });
     // Add an axis and title.
-    pc._g
+    const titleElement = pc._g
       .append('svg:g')
       .attr('class', 'axis')
       .attr('transform', 'translate(0,0)')
@@ -56,7 +56,18 @@ const createAxes = (config, pc, xscale, flags, axis) =>
           .style('stroke', '#222')
           .style('shape-rendering', 'crispEdges');
       })
+      .append('svg:switch');
 
+    titleElement
+      .append('svg:foreignObject')
+      .attr('x', 0)
+      .attr('y', 0)
+      .append('xmlns:p')
+      .text(dimensionLabels(config))
+      .on('dblclick', flipAxisAndUpdatePCP(config, pc, axis))
+      .on('wheel', rotateLabels(config, pc));
+
+    titleElement
       .append('svg:text')
       .attr('text-anchor', 'middle')
       .attr('y', 0)
@@ -68,7 +79,7 @@ const createAxes = (config, pc, xscale, flags, axis) =>
       .attr('class', 'label')
       .text(dimensionLabels(config))
       .on('dblclick', flipAxisAndUpdatePCP(config, pc, axis))
-      .on('wheel', rotateLabels(config, pc));
+      .on('wheel', rotateLabels(config, pc))
 
     if (config.nullValueSeparator === 'top') {
       pc.svg
